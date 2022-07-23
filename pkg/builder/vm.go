@@ -108,6 +108,11 @@ func (v *VMBuilder) MachineType(machineType string) *VMBuilder {
 	return v
 }
 
+func (v *VMBuilder) Bootloader(bootLoader kubevirtv1.Bootloader) *VMBuilder {
+	v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader = &bootLoader
+	return v
+}
+
 func (v *VMBuilder) HostName(hostname string) *VMBuilder {
 	v.VirtualMachine.Spec.Template.Spec.Hostname = hostname
 	return v

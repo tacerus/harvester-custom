@@ -110,26 +110,29 @@ func (v *VMBuilder) MachineType(machineType string) *VMBuilder {
 }
 
 func (v *VMBuilder) EFIBoot(secureBoot bool) *VMBuilder {
-	if v.VirtualMachine.Spec.Template.Spec.Domain.Firmware == nil {
-		v.VirtualMachine.Spec.Template.Spec.Domain.Firmware = &kubevirtv1.Firmware{}
-	}
-	if v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader == nil {
-		v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader = &kubevirtv1.Bootloader{}
-	}
-	if v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader.EFI == nil {
-		v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader.EFI = &kubevirtv1.EFI{}
-	}
-	v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader.EFI.SecureBoot = pointer.Bool(secureBoot)
 	if secureBoot {
-		if v.VirtualMachine.Spec.Template.Spec.Domain.Features == nil {
-			v.VirtualMachine.Spec.Template.Spec.Domain.Features = &kubevirtv1.Features{}
+		if v.VirtualMachine.Spec.Template.Spec.Domain.Firmware == nil {
+			v.VirtualMachine.Spec.Template.Spec.Domain.Firmware = &kubevirtv1.Firmware{}
 		}
-		if v.VirtualMachine.Spec.Template.Spec.Domain.Features.SMM == nil {
-			v.VirtualMachine.Spec.Template.Spec.Domain.Features.SMM = &kubevirtv1.FeatureState{}
+		if v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader == nil {
+			v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader = &kubevirtv1.Bootloader{}
 		}
-		v.VirtualMachine.Spec.Template.Spec.Domain.Features.SMM.Enabled = pointer.Bool(secureBoot)
+		if v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader.EFI == nil {
+			v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader.EFI = &kubevirtv1.EFI{}
+		}
+		v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader.EFI.SecureBoot = pointer.Bool(secureBoot)
+		if secureBoot {
+			if v.VirtualMachine.Spec.Template.Spec.Domain.Features == nil {
+				v.VirtualMachine.Spec.Template.Spec.Domain.Features = &kubevirtv1.Features{}
+			}
+			if v.VirtualMachine.Spec.Template.Spec.Domain.Features.SMM == nil {
+				v.VirtualMachine.Spec.Template.Spec.Domain.Features.SMM = &kubevirtv1.FeatureState{}
+			}
+			v.VirtualMachine.Spec.Template.Spec.Domain.Features.SMM.Enabled = pointer.Bool(secureBoot)
+		}
+		return v
 	}
-	return v
+	return nil
 }
 
 func (v *VMBuilder) HostName(hostname string) *VMBuilder {

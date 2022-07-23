@@ -1,4 +1,4 @@
-module github.com/harvester/harvester
+module github.com/tacerus/harvester-custom
 
 go 1.18
 

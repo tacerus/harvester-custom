@@ -7,6 +7,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	kubevirtv1 "kubevirt.io/api/core/v1"
+	"k8s.io/utils/pointer"
 )
 
 const (
@@ -108,8 +109,26 @@ func (v *VMBuilder) MachineType(machineType string) *VMBuilder {
 	return v
 }
 
-func (v *VMBuilder) Bootloader(bootLoader kubevirtv1.Bootloader) *VMBuilder {
-	v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader = &bootLoader
+func (v *VMBuilder) EFIBoot(secureBoot bool) *VMBuilder {
+	if v.VirtualMachine.Spec.Template.Spec.Domain.Firmware == nil {
+		v.VirtualMachine.Spec.Template.Spec.Domain.Firmware = &kubevirtv1.Firmware{}
+	}
+	if v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader == nil {
+		v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader = &kubevirtv1.Bootloader{}
+	}
+	if v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader.EFI == nil {
+		v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader.EFI = &kubevirtv1.EFI{}
+	}
+	v.VirtualMachine.Spec.Template.Spec.Domain.Firmware.Bootloader.EFI.SecureBoot = pointer.Bool(secureBoot)
+	if secureBoot {
+		if v.VirtualMachine.Spec.Template.Spec.Domain.Features == nil {
+			v.VirtualMachine.Spec.Template.Spec.Domain.Features = &kubevirtv1.Features{}
+		}
+		if v.VirtualMachine.Spec.Template.Spec.Domain.Features.SMM == nil {
+			v.VirtualMachine.Spec.Template.Spec.Domain.Features.SMM = &kubevirtv1.FeatureState{}
+		}
+		v.VirtualMachine.Spec.Template.Spec.Domain.Features.SMM.Enabled = pointer.Bool(secureBoot)
+	}
 	return v
 }
 
